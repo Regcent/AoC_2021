@@ -86,23 +86,13 @@ class SnailfishNumber:
         magnitude_depth = list(self.depth)
         magnitudes = list(self.values)
         while len(magnitudes) > 1:
-            idx = 0
-            new_depth = []
-            new_magnitudes = []
-            while idx < len(magnitude_depth):
-                if idx < len(magnitudes) - 1:
-                    if magnitude_depth[idx] == magnitude_depth[idx + 1]:
-                        new_depth.append(magnitude_depth[idx] - 1)
-                        new_magnitudes.append(3 * magnitudes[idx] + 2 * magnitudes[idx + 1])
-                        idx += 2
-                        continue
-                new_depth.append(magnitude_depth[idx])
-                new_magnitudes.append(magnitudes[idx])
-                idx += 1
-            magnitude_depth = new_depth
-            magnitudes = new_magnitudes
-            print(magnitude_depth)
-            print(magnitudes)
+            max_depth = max(magnitude_depth)
+            for i in range(len(magnitude_depth)):
+                if magnitude_depth[i] == max_depth:
+                    magnitudes[i] = 3 * magnitudes[i] + 2 * magnitudes.pop(i + 1)
+                    magnitude_depth[i] -= 1
+                    magnitude_depth.pop(i + 1)
+                    break
         return magnitudes[0]
 
     def __str__(self):
@@ -127,14 +117,10 @@ def your_script(raw_data: str) -> Union[int, str, float, bool]:
     snailfish_numbers = []
     for raw_number in raw_data.split("\n"):
         snailfish_numbers.append(parse_snailfish_number(raw_number))
-    for number in snailfish_numbers:
-        print(number)
-        print(number.magnitude())
     current_number = SnailfishNumber(snailfish_numbers[0])
     for i in range(1, len(snailfish_numbers)):
         current_number.add(snailfish_numbers[i])
         current_number.reduce()
-    print(current_number)
     print(f"Part 1: {current_number.magnitude()}")
     max_magnitude = 0
     for a in snailfish_numbers:
@@ -145,7 +131,6 @@ def your_script(raw_data: str) -> Union[int, str, float, bool]:
             test.add(b)
             test.reduce()
             candidate = test.magnitude()
-            print(candidate)
             if candidate > max_magnitude:
                 max_magnitude = candidate
     print(f"Part 2: {max_magnitude}")
@@ -174,4 +159,4 @@ def parse_snailfish_number(raw_number: str):
     return number
 
 if __name__ == "__main__":
-    print(run_script("example.txt"))
+    print(run_script("input.txt"))
